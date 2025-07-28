@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Setting up short-link project..."
+
+if ! command -v bundle &> /dev/null; then
+    echo "Error: bundler is not installed. Please install it first:"
+    echo "gem install bundler"
+    exit 1
+fi
+
+echo "Installing dependencies..."
+bundle install
+
+echo "Setup complete! Run 'bin/serve' to start the server."

@@ -1,0 +1,5 @@
+require 'minitest/autorun'
+require 'rack/test'
+require 'rack'
+require 'digest/sha1'
+require 'rack/request'

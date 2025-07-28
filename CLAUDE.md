@@ -10,12 +10,22 @@ This is a minimal link shortener built with Ruby using the Falcon HTTP server. T
 
 **Setup:**
 ```bash
-bundle install
+bin/setup
 ```
 
 **Run the server:**
 ```bash
-bundle exec falcon serve -b http://localhost:3000
+bin/serve
+```
+
+**Run with custom host/port:**
+```bash
+HOST=0.0.0.0 PORT=8080 bin/serve
+```
+
+**Run tests:**
+```bash
+bin/test
 ```
 
 ## Architecture

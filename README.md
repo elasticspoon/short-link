@@ -13,11 +13,23 @@ All other dependencies are gems that come with Ruby.
 ## Setup
 
 ```bash
-bundle install
+bin/setup
 ```
 
 ## Running
 
 ```bash
-bundle exec falcon serve -b http://localhost:3000
+bin/serve
+```
+
+The server will start on http://localhost:3000 by default. You can customize the host and port:
+
+```bash
+HOST=0.0.0.0 PORT=8080 bin/serve
+```
+
+## Testing
+
+```bash
+bin/test
 ```
