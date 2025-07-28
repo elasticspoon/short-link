@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Running tests..."
+bundle exec ruby -Ilib:test test/unit/*.rb
+bundle exec ruby -Ilib:test test/integration/*.rb --verbose
+

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PORT=${PORT:-3000}
+HOST=${HOST:-localhost}
+
+echo "Starting short-link server on http://${HOST}:${PORT}..."
+bundle exec falcon serve -b "http://${HOST}:${PORT}"

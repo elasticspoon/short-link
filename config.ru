@@ -1,37 +1,41 @@
-require 'digest/sha2'
+require 'rack/request'
+require 'digest/sha1'
 KEYS = {}
 
 run do |env|
-  req = env['protocol.http.request']
+  req = Rack::Request.new(env)
+  request_method = req.request_method
 
-  if req.method == 'GET'
+  if request_method == 'GET'
     handle_get(req)
-  elsif req.method == 'POST'
-    handle_post(req, env['CONTENT_TYPE'])
+  elsif request_method == 'POST'
+    handle_post(req)
+  elsif request_method == 'HEAD'
+    [200, { 'content-type' => 'text/plain' }, []]
   else
-    [404, { 'Content-Type' => 'text/plain' }, ['Not Found']]
+    [404, { 'content-type' => 'text/plain' }, ['Not Found']]
   end
 end
 
-def handle_post(req, content_type)
+def handle_post(req)
+  content_type = req.content_type
   if content_type == 'text/plain'
     url = req.body.read
     encoded = Digest::SHA1.hexdigest(url)
     KEYS[encoded] = url
-    [201, { 'Content-Type' => 'text/plain' }, [encoded]]
+    [201, { 'content-type' => 'text/plain' }, [encoded]]
   else
-    [422, { 'Content-Type' => 'text/plain' }, ['Content Type must be "text/plain"']]
+    [422, { 'content-type' => 'text/plain' }, ['Content Type must be "text/plain"']]
   end
 end
 
 def handle_get(req)
   path = req.path[1..]
   real_path = KEYS[path]
-  sleep 10
 
   if real_path
-    [200, { 'Content-Type' => 'text/plain' }, ["Redirected to #{path}"]]
+    [200, { 'content-type' => 'text/plain' }, ["Redirected to #{real_path}"]]
   else
-    [404, { 'Content-Type' => 'text/plain' }, ['Not found']]
+    [404, { 'content-type' => 'text/plain' }, ['Not found']]
   end
 end

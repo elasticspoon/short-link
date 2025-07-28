@@ -61,6 +61,7 @@ GEM
     mapping (1.1.3)
     memory-leak (0.5.2)
     metrics (0.12.2)
+    minitest (5.25.5)
     openssl (3.3.0)
     protocol-hpack (1.5.1)
     protocol-http (0.51.0)
@@ -74,6 +75,8 @@ GEM
       protocol-http (~> 0.43)
       rack (>= 1.0)
     rack (3.1.16)
+    rack-test (2.2.0)
+      rack (>= 1.3)
     samovar (2.3.0)
       console (~> 1.0)
       mapping (~> 1.0)
@@ -85,6 +88,8 @@ PLATFORMS
 
 DEPENDENCIES
   falcon
+  minitest
+  rack-test
 
 BUNDLED WITH
    2.6.9
