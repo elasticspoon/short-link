@@ -4,11 +4,15 @@
 
 This project is a super bare-bones link shortener.
 
-It uses Falcon as its HTTP server and connects to a single sqlite
-database for storing shortened links. The goal of this project
-was to use the absolute minimal amount of dependencies.
-Thus it only brings in an HTTP server and a database.
-All other dependencies are gems that come with Ruby.
+It uses Falcon as its HTTP server and connects to a SQLite
+database for storing shortened links. The database configuration
+is managed in `db/database.rb` and the connection is established
+via `Database.connect`.
+
+Key features:
+- Minimal dependencies (just Falcon and SQLite3)
+- Database configuration separated from application logic
+- Simple REST API for creating and retrieving short links
 
 ## Setup
 

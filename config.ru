@@ -1,19 +1,9 @@
 require 'rack/request'
 require 'digest/sha1'
-require 'sqlite3'
+require_relative 'db/database'
 
 # Initialize database
-DB = SQLite3::Database.new('links.db')
-DB.results_as_hash = true
-
-# Create table if it doesn't exist
-DB.execute <<-SQL
-  CREATE TABLE IF NOT EXISTS links (
-    id INTEGER PRIMARY KEY,
-    key TEXT UNIQUE,
-    url TEXT NOT NULL
-  )
-SQL
+DB = Database.connect
 
 run do |env|
   req = Rack::Request.new(env)
