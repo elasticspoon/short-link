@@ -11,8 +11,7 @@ DB.execute <<-SQL
   CREATE TABLE IF NOT EXISTS links (
     id INTEGER PRIMARY KEY,
     key TEXT UNIQUE,
-    url TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    url TEXT NOT NULL
   )
 SQL
 
@@ -36,9 +35,9 @@ def handle_post(req)
   if content_type == 'text/plain'
     url = req.body.read
     encoded = Digest::SHA1.hexdigest(url)
-    
+
     begin
-      DB.execute("INSERT INTO links (key, url) VALUES (?, ?)", [encoded, url])
+      DB.execute('INSERT INTO links (key, url) VALUES (?, ?)', [encoded, url])
       [201, { 'content-type' => 'text/plain' }, [encoded]]
     rescue SQLite3::ConstraintException
       [409, { 'content-type' => 'text/plain' }, ['URL already shortened']]
@@ -52,7 +51,7 @@ end
 
 def handle_get(req)
   path = req.path[1..]
-  row = DB.get_first_row("SELECT url FROM links WHERE key = ?", [path])
+  row = DB.get_first_row('SELECT url FROM links WHERE key = ?', [path])
 
   if row && row['url']
     [200, { 'content-type' => 'text/plain' }, ["Redirected to #{row['url']}"]]
