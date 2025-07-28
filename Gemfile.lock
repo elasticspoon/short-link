@@ -1,4 +1,5 @@
 GEM
+  remote: https://rubygems.org/
   specs:
     async (2.27.0)
       console (~> 1.29)
