@@ -6,3 +6,4 @@ HOST=${HOST:-localhost}
 
 echo "Starting short-link server on http://${HOST}:${PORT}..."
 bundle exec falcon serve -b "http://${HOST}:${PORT}"
+

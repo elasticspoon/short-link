@@ -1,33 +1,34 @@
 require 'rack/request'
 require 'digest/sha1'
+require 'connection_pool'
 require_relative 'db/database'
 
-# Initialize database
-DB = Database.connect
-
 run do |env|
-  req = Rack::Request.new(env)
-  request_method = req.request_method
+  Database.with_connection_pool do |db_conn|
+    req = Rack::Request.new(env)
+    request_method = req.request_method
 
-  if request_method == 'GET'
-    handle_get(req)
-  elsif request_method == 'POST'
-    handle_post(req)
-  elsif request_method == 'HEAD'
-    [200, { 'content-type' => 'text/plain' }, []]
-  else
-    [404, { 'content-type' => 'text/plain' }, ['Not Found']]
+    case request_method
+    when 'GET'
+      handle_get(req, db_conn:)
+    when 'POST'
+      handle_post(req, db_conn:)
+    when 'HEAD'
+      [200, { 'content-type' => 'text/plain' }, []]
+    else
+      [404, { 'content-type' => 'text/plain' }, ['Not Found']]
+    end
   end
 end
 
-def handle_post(req)
+def handle_post(req, db_conn:)
   content_type = req.content_type
   if content_type == 'text/plain'
     url = req.body.read
     encoded = Digest::SHA1.hexdigest(url)
 
     begin
-      DB.execute('INSERT INTO links (key, url) VALUES (?, ?)', [encoded, url])
+      db_conn.insert_link(encoded, url)
       [201, { 'content-type' => 'text/plain' }, [encoded]]
     rescue SQLite3::ConstraintException
       [409, { 'content-type' => 'text/plain' }, ['URL already shortened']]
@@ -39,13 +40,13 @@ def handle_post(req)
   end
 end
 
-def handle_get(req)
+def handle_get(req, db_conn:)
   path = req.path[1..]
-  row = DB.get_first_row('SELECT url FROM links WHERE key = ?', [path])
+  link = db_conn.get_link(path)
 
-  if row && row['url']
-    [200, { 'content-type' => 'text/plain' }, ["Redirected to #{row['url']}"]]
+  if link
+    [301, { 'content-type' => 'text/plain', 'location' => link }, ["Moved Permanently. Redirecting to #{link}"]]
   else
-    [404, { 'content-type' => 'text/plain' }, ['Not found']]
+    [404, { 'content-type' => 'text/plain' }, ['Not found.']]
   end
 end
