@@ -32,6 +32,7 @@ GEM
     async-service (0.13.0)
       async
       async-container (~> 0.16)
+    connection_pool (2.5.3)
     console (1.33.0)
       fiber-annotation
       fiber-local (~> 1.1)
@@ -80,16 +81,18 @@ GEM
     samovar (2.3.0)
       console (~> 1.0)
       mapping (~> 1.0)
+    sqlite3 (2.7.3-x86_64-linux-gnu)
     traces (0.15.2)
 
 PLATFORMS
-  ruby
   x86_64-linux
 
 DEPENDENCIES
+  connection_pool
   falcon
   minitest
   rack-test
+  sqlite3
 
 BUNDLED WITH
    2.6.9

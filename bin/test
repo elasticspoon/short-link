@@ -2,6 +2,6 @@
 set -euo pipefail
 
 echo "Running tests..."
-bundle exec ruby -Ilib:test test/unit/*.rb
+ruby db/setup.rb
+# bundle exec ruby -Ilib:test test/unit/*.rb --verbose
 bundle exec ruby -Ilib:test test/integration/*.rb --verbose
-
