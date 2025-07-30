@@ -25,13 +25,10 @@ def handle_post(req, db_conn:)
   content_type = req.content_type
   if content_type == 'text/plain'
     url = req.body.read
-    encoded = Digest::SHA1.hexdigest(url)
 
     begin
-      db_conn.insert_link(encoded, url)
+      encoded = insert_key(url, db_conn)
       [201, { 'content-type' => 'text/plain' }, [encoded]]
-    rescue SQLite3::ConstraintException
-      [409, { 'content-type' => 'text/plain' }, ['URL already shortened']]
     rescue SQLite3::Exception => e
       [500, { 'content-type' => 'text/plain' }, ["Database error: #{e.message}"]]
     end
@@ -49,4 +46,18 @@ def handle_get(req, db_conn:)
   else
     [404, { 'content-type' => 'text/plain' }, ['Not found.']]
   end
+end
+
+def insert_key(url, conn, short_url: nil)
+  short_url ||= Digest::SHA1.hexdigest(url)[...6]
+
+  begin
+    conn.insert_link(short_url, url)
+  rescue SQLite3::ConstraintException
+    short_url = Digest::SHA1.hexdigest(short_url)[...6]
+
+    return insert_key(url, conn, short_url:)
+  end
+
+  short_url
 end
